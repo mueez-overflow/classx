@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClassX — Lecture Resources</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --bg:        #F7F5F0;
+      --bg-alt:    #EDEAE3;
+      --surface:   #FFFFFF;
+      --border:    #D9D5CC;
+      --text:      #1A1814;
+      --text-muted:#6B6660;
+      --accent:    #B07D3C;
+      --accent-lt: #F0E4CE;
+      --tag-bg:    #E8E4DB;
+      --nav-bg:    #1A1814;
+      --nav-text:  #E8E4DB;
+      --nav-hover: #B07D3C;
+      --shadow:    0 2px 16px rgba(0,0,0,.08);
+      --r:         10px;
+      --transition: .25s ease;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:        #111219;
+        --bg-alt:    #191C27;
+        --surface:   #1F2230;
+        --border:    #2E3248;
+        --text:      #E4E0D8;
+        --text-muted:#888BA0;
+        --accent:    #C8973A;
+        --accent-lt: #2A2214;
+        --tag-bg:    #252838;
+        --nav-bg:    #0D0F18;
+        --nav-text:  #D8D4CC;
+        --nav-hover: #C8973A;
+        --shadow:    0 2px 24px rgba(0,0,0,.35);
+      }
+    }
+
+    /* ─── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Jost', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────────── */
+    .shell {
+      display: flex;
+      flex: 1;
+    }
+
+    /* ─── SIDEBAR NAV ────────────────────────────────────── */
+    nav {
+      width: 240px;
+      min-height: 100vh;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      padding: 36px 28px 28px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav-brand h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--nav-hover);
+      letter-spacing: .02em;
+      line-height: 1;
+    }
+    .nav-brand p {
+      font-size: .72rem;
+      font-weight: 300;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(232,228,220,.45);
+      margin-top: 6px;
+    }
+    .nav-links {
+      list-style: none;
+      padding: 20px 0;
+      flex: 1;
+    }
+    .nav-links li a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 28px;
+      color: var(--nav-text);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 400;
+      letter-spacing: .03em;
+      transition: color var(--transition), background var(--transition);
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+    .nav-links li a:hover,
+    .nav-links li a.active {
+      color: var(--nav-hover);
+      background: rgba(255,255,255,.04);
+      border-left-color: var(--nav-hover);
+    }
+    .nav-links li a svg {
+      opacity: .6;
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+    }
+    .nav-links li a.active svg,
+    .nav-links li a:hover svg { opacity: 1; }
+    .nav-section-label {
+      font-size: .65rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(232,228,220,.3);
+      padding: 18px 28px 6px;
+    }
+    .nav-footer {
+      padding: 24px 28px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      font-size: .7rem;
+      color: rgba(232,228,220,.3);
+      letter-spacing: .06em;
+    }
+
+    /* ─── TOPBAR (mobile) ────────────────────────────────── */
+    .topbar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      padding: 0 20px;
+      height: 56px;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .topbar-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--nav-hover);
+    }
+    .hamburger {
+      background: none;
+      border: none;
+      color: var(--nav-text);
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .mobile-nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 150;
+    }
+    .mobile-nav-overlay.open { display: block; }
+    nav.mobile-open {
+      transform: translateX(0) !important;
+    }
+
+    /* ─── MAIN CONTENT ───────────────────────────────────── */
+    main {
+      flex: 1;
+      padding: 52px 56px;
+      max-width: 900px;
+      min-width: 0;
+    }
+
+    /* ─── PAGE TRANSITIONS ───────────────────────────────── */
+    .page { display: none; animation: fadeIn .35s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* ─── HOME PAGE ──────────────────────────────────────── */
+    .home-hero {
+      margin-bottom: 52px;
+    }
+    .home-hero .eyebrow {
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .home-hero h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
+      font-weight: 500;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .home-hero h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .home-hero p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+    .home-hero .overview-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      transition: gap var(--transition);
+    }
+    .home-hero .overview-link:hover { gap: 14px; }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .course-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 32px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .course-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
+    .course-card:hover::before { transform: scaleX(1); }
+    .card-icon {
+      width: 44px; height: 44px;
+      background: var(--accent-lt);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+    .card-icon svg { width: 22px; height: 22px; }
+    .course-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .course-card p {
+      font-size: .875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .tag {
+      background: var(--tag-bg);
+      color: var(--text-muted);
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .card-arrow {
+      position: absolute;
+      right: 28px; bottom: 28px;
+      color: var(--accent);
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .course-card:hover .card-arrow { opacity: 1; transform: none; }
+
+    /* ─── COURSE PAGE ────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb {
+      font-size: .75rem;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .page-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .resources-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .res-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color var(--transition), color var(--transition), background var(--transition);
+    }
+    .res-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-lt);
+    }
+    .res-btn svg { width: 14px; height: 14px; opacity: .7; }
+
+    /* ─── CLASS ENTRIES ──────────────────────────────────── */
+    .class-list { display: flex; flex-direction: column; gap: 2px; }
+    .class-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+    .class-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      cursor: pointer;
+      gap: 16px;
+      transition: background var(--transition);
+    }
+    .class-header:hover { background: var(--bg-alt); }
+    .class-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+      min-width: 0;
+    }
+    .class-num {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-lt);
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .class-title {
+      font-size: .95rem;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .class-chevron {
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: transform .2s ease;
+    }
+    .class-item.open .class-chevron { transform: rotate(180deg); }
+    .class-body {
+      display: none;
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--border);
+    }
+    .class-item.open .class-body { display: block; }
+    .class-desc {
+      font-size: .875rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      margin-top: 16px;
+      line-height: 1.7;
+    }
+    .resource-group { margin-bottom: 16px; }
+    .resource-group-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .resource-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .resource-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: .8rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .resource-link.video {
+      background: #FFF0E8;
+      color: #C2511A;
+      border: 1px solid #F5CDB4;
+    }
+    .resource-link.video:hover { background: #FFE0CC; }
+    @media (prefers-color-scheme: dark) {
+      .resource-link.video { background: #2A1A10; color: #E07840; border-color: #3D2415; }
+      .resource-link.video:hover { background: #361E12; }
+    }
+    .resource-link.slide {
+      background: #EBF0FF;
+      color: #2D57D4;
+      border: 1px solid #C0CEFF;
+    }
+    .resource-link.slide:hover { background: #D8E2FF; }
+    @media (prefers-color-scheme: dark) {
+      .resource-link.slide { background: #121828; color: #7899E8; border-color: #1E2D50; }
+      .resource-link.slide:hover { background: #1A2438; }
+    }
+    .resource-link.note {
+      background: #F0FAEE;
+      color: #2A7A1E;
+      border: 1px solid #BADDB5;
+    }
+    .resource-link.note:hover { background: #E0F5DC; }
+    @media (prefers-color-scheme: dark) {
+      .resource-link.note { background: #101E10; color: #5EAA52; border-color: #1C3418; }
+      .resource-link.note:hover { background: #162A16; }
+    }
+    .resource-link.quiz {
+      background: #FDF0FF;
+      color: #8D32B4;
+      border: 1px solid #DDBFF0;
+    }
+    .resource-link.quiz:hover { background: #F5E0FF; }
+    @media (prefers-color-scheme: dark) {
+      .resource-link.quiz { background: #1C1028; color: #BD6EE0; border-color: #301848; }
+      .resource-link.quiz:hover { background: #261438; }
+    }
+    .resource-link.file {
+      background: var(--tag-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .resource-link.file:hover { background: var(--bg-alt); color: var(--text); }
+    .resource-link svg { width: 13px; height: 13px; }
+
+    .class-note {
+      background: var(--accent-lt);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      font-size: .82rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+    .inline-code {
+      font-family: 'Courier New', monospace;
+      font-size: .85em;
+      background: var(--tag-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 32px 0;
+    }
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    /* ─── SPECIAL CLASS TYPES ────────────────────────────── */
+    .class-item.milestone .class-num {
+      background: #F0E4CE;
+      color: #8C5E1A;
+    }
+    @media (prefers-color-scheme: dark) {
+      .class-item.milestone .class-num { background: #2A1E0C; color: #C8973A; }
+    }
+    .class-item.milestone .class-header { background: rgba(176,125,60,.04); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      nav {
+        position: fixed;
+        left: 0; top: 0;
+        transform: translateX(-100%);
+        transition: transform .3s ease;
+        z-index: 200;
+      }
+      nav.mobile-open { transform: translateX(0); }
+      .topbar { display: flex; }
+      main { padding: 32px 20px; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .class-header { padding: 14px 16px; }
+      .class-body { padding: 0 16px 18px; }
+    }
+    @media (min-width: 769px) {
+      .mobile-nav-overlay { display: none !important; }
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ─── SELECTION ──────────────────────────────────────── */
+    ::selection { background: var(--accent); color: #fff; }
+  </style>
+</head>
+<body>
+
+<!-- Mobile top bar -->
+<header class="topbar">
+  <span class="topbar-brand">ClassX</span>
+  <button class="hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="mobile-nav-overlay" id="overlay" onclick="toggleMobileNav()"></div>
+
+<div class="shell">
+  <!-- ── SIDEBAR ── -->
+  <nav id="sidebar">
+    <div class="nav-brand">
+      <h1>ClassX</h1>
+      <p>Lecture Resources</p>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showPage('home')" class="active" id="nav-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </a></li>
+      <li class="nav-section-label">Courses</li>
+      <li><a href="#" onclick="showPage('cf')" id="nav-cf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Computer Fundamentals
+      </a></li>
+      <li><a href="#" onclick="showPage('ca')" id="nav-ca">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        Computer Architecture
+      </a></li>
+      <li><a href="#" onclick="showPage('ddl')" id="nav-ddl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Database Design Lab
+      </a></li>
+      <li><a href="#" onclick="showPage('dd')" id="nav-dd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Database Design
+      </a></li>
+    </ul>
+    <div class="nav-footer">Southeast University &middot; COVID-19 Era</div>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <!-- ════ HOME PAGE ════ -->
+    <section class="page active" id="page-home">
+      <div class="home-hero">
+        <p class="eyebrow">e-learning platform</p>
+        <h2>Resources for<br /><em>every lecture</em></h2>
+        <p>Pre-recorded videos, slides, notes, and practice problems for courses taught at Southeast University — organized by class, built for self-paced learning during the COVID-19 pandemic.</p>
+        <a href="https://youtu.be/VK6TE1K_CAo" target="_blank" class="overview-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Watch overview video →
+        </a>
+      </div>
+
+      <div class="courses-grid">
+        <a class="course-card" onclick="showPage('cf')" href="#">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>Computer Fundamentals</h3>
+          <p>Number systems, binary arithmetic, IEEE-754 floating point, memory, data communication, and introductory programming concepts.</p>
+          <div class="card-meta">
+            <span class="tag">23 Classes</span>
+            <span class="tag">Videos</span>
+            <span class="tag">Slides</span>
+            <span class="tag">Worksheets</span>
+          </div>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+
+        <a class="course-card" onclick="showPage('ca')" href="#">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          </div>
+          <h3>Computer Architecture</h3>
+          <p>MIPS ISA, instruction encoding, pipelining, hazard resolution, floating point instructions, and datapath design.</p>
+          <div class="card-meta">
+            <span class="tag">22 Classes</span>
+            <span class="tag">Videos</span>
+            <span class="tag">Notes</span>
+            <span class="tag">Classwork</span>
+          </div>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+
+        <a class="course-card" onclick="showPage('ddl')" href="#">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <h3>Database Design Lab</h3>
+          <p>Hands-on MySQL lab covering table creation, retrieval queries, constraints, joins, and subqueries with practical worksheets.</p>
+          <div class="card-meta">
+            <span class="tag">10 Labs</span>
+            <span class="tag">Videos</span>
+            <span class="tag">Worksheets</span>
+            <span class="tag">Project</span>
+          </div>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+
+        <a class="course-card" onclick="showPage('dd')" href="#">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>Database Design</h3>
+          <p>ER modeling, EER modeling, relational constraints, schema mapping, normalization (1NF–3NF), and SQL query writing.</p>
+          <div class="card-meta">
+            <span class="tag">23 Classes</span>
+            <span class="tag">Videos</span>
+            <span class="tag">Slides</span>
+            <span class="tag">Classwork</span>
+          </div>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ════ COMPUTER FUNDAMENTALS ════ -->
+    <section class="page" id="page-cf">
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a onclick="showPage('home')">Home</a>
+          <span>›</span>
+          <span>Computer Fundamentals</span>
+        </div>
+        <h2>Computer Fundamentals</h2>
+        <div class="resources-bar">
+          <a href="https://www.youtube.com/playlist?list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Video Playlist
+          </a>
+          <a href="https://drive.google.com/drive/folders/12JabHujZ0K_tgJ6or-k7i3I8QoZvnVuL?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            All Slides
+          </a>
+          <a href="https://drive.google.com/drive/folders/1SDiixpw2H6rTfrYiHisjnLywod8qItaS?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            All Notes
+          </a>
+          <a href="https://drive.google.com/drive/folders/1M8jjm06iMyhzmC7KTeYqQgB7vX1Vd6J2?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Worksheets
+          </a>
+        </div>
+      </div>
+
+      <div class="class-list">
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 1</span>
+              <span class="class-title">Course Overview</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Students are given an overview of what this course is about and how it will be conducted.</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 2</span>
+              <span class="class-title">Introduction</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1zZEOpnxM17wXN5TbGbGNbQtVYyymzqcZ/view?usp=sharing" target="_blank" class="resource-link slide">📄 Introduction</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://youtu.be/i6Q8q1r2WLw" target="_blank" class="resource-link video">▶ Introduction (22 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0CfgM5MhT4GA0XF2oMK897dPg3o1FF1MdiWuUz1FCSnRSHw/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 3</span>
+              <span class="class-title">Computer Generations &amp; Components</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1-3nwGwA9Nq-Dv5V2VdslP_oSR9w_hxW9/view?usp=sharing" target="_blank" class="resource-link slide">📄 Computer Generations</a>
+                <a href="https://drive.google.com/file/d/1kAYVeW5AUmbi69mGeB_pG1f8AYIZE3xd/view?usp=sharing" target="_blank" class="resource-link slide">📄 Computer Components</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=RTHJqY5oLJw&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=2" target="_blank" class="resource-link video">▶ Computer Generations (27 min)</a>
+                <a href="https://www.youtube.com/watch?v=1QS8igTEHl0&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=3" target="_blank" class="resource-link video">▶ Computer Components (9 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSePGoySqV3EhIs2iB7DTGArgWX4QYstybmKOzwM01OpDhUEbw/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 4</span>
+              <span class="class-title">Creating Presentations (Microsoft PowerPoint)</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=2MjOMfSgBFY&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=15" target="_blank" class="resource-link video">▶ Creating Presentations Using MS PowerPoint (39 min)</a>
+                <a href="https://youtu.be/goMsLZ0lz9w" target="_blank" class="resource-link video">▶ Sample Undergraduate Presentation</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScCUMwKK4ztuzL9McS57Xatd6qbAzzIoMf7uobBD_zNh5I0Gg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+            <div class="class-note">📌 <strong>Classwork:</strong> Create a presentation covering how you have been participating in online classes. Include device details (processor, memory, OS) and at least 2 applications that helped you (Google Classroom, Gmail, MS PowerPoint, etc.).</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 5</span>
+              <span class="class-title">Classes of Computers &amp; Number System (Part 1–3)</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1EgkAyQ7HXeHq4MH0LtVeH7qIH4IUO6f-/view?usp=sharing" target="_blank" class="resource-link slide">📄 Classes of Computers</a>
+                <a href="https://drive.google.com/file/d/1_gB40ZTTnemql7jNzw9TLyisETixjFS3/view?usp=sharing" target="_blank" class="resource-link slide">📄 Number System</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=H4CM8ViSjhw&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=4" target="_blank" class="resource-link video">▶ Classes of Computers (20 min)</a>
+                <a href="https://www.youtube.com/watch?v=L_IPeKN1eo0&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=5" target="_blank" class="resource-link video">▶ NS Part 1: Introduction (17 min)</a>
+                <a href="https://www.youtube.com/watch?v=lDSc0L6V3Rk&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=6" target="_blank" class="resource-link video">▶ NS Part 2: Base R to Decimal (6 min)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 6</span>
+              <span class="class-title">Number System (Part 3–5): Conversions</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1_gB40ZTTnemql7jNzw9TLyisETixjFS3/view?usp=sharing" target="_blank" class="resource-link slide">📄 Number System (continued)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=85vsSNLM7Oc&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=7" target="_blank" class="resource-link video">▶ NS Part 3: Sum of Weights Method (9 min)</a>
+                <a href="https://www.youtube.com/watch?v=mSNAY777jd4&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=8" target="_blank" class="resource-link video">▶ NS Part 4: Repeated Division/Multiplication (12 min)</a>
+                <a href="https://www.youtube.com/watch?v=DuHDEqzOh28&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=9" target="_blank" class="resource-link video">▶ NS Part 5: Binary ↔ Octal/Hex (24 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfO1ibZzOurgdNWuX7ylikSvH5gMYE8ZmXOg--mKei-TMuJxA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 7</span>
+              <span class="class-title">Number System (Part 6–8): Addition &amp; Multiplication</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Notes</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1NlK2aVnuTQpRl435xew34XVfKJC6qmnB/view?usp=sharing" target="_blank" class="resource-link note">📝 Binary Addition</a>
+                <a href="https://drive.google.com/file/d/1jO4baE8Ict1q9X9VcDa3Lql75rCigPJ3/view?usp=sharing" target="_blank" class="resource-link note">📝 Base-R Addition</a>
+                <a href="https://drive.google.com/file/d/1msZNFkogbWz_eXkC41gAbwWbIy4SSbpa/view?usp=sharing" target="_blank" class="resource-link note">📝 Multiplication</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=VEe0Aiw-_4I&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=10" target="_blank" class="resource-link video">▶ NS Part 6: Binary Addition (15 min)</a>
+                <a href="https://www.youtube.com/watch?v=Onr_Qx9PvJ4&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=11" target="_blank" class="resource-link video">▶ NS Part 7: Base-R Addition (15 min)</a>
+                <a href="https://www.youtube.com/watch?v=iZkIUQzq2cY&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=12" target="_blank" class="resource-link video">▶ NS Part 8: Hex Multiplication (12 min)</a>
+                <a href="https://www.youtube.com/watch?v=zDwZbCL5VCM&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=13" target="_blank" class="resource-link video">▶ NS Part 9: Multiplication Exercises (5 min) <em style="opacity:.7;font-size:.85em;">optional</em></a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSc6Xzd8Jt9MvLzAMVJaqtOImtUjTiGHlDJmbIU-liRtEN4caw/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Worksheet</span>
+              <span class="class-title">Number System Sample Quiz</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Files</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1e7USZBcG7nfgC3kXJFgqqtVNvu9Rnwnm/view?usp=sharing" target="_blank" class="resource-link file">📎 Sample Quiz</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=JAhc-Pa3n9o" target="_blank" class="resource-link video">▶ Online Exam Guidelines</a>
+              </div>
+            </div>
+            <div class="class-note">⚠️ Students must submit their work to be eligible for future exams.</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 8</span>
+              <span class="class-title">BCD, Sign &amp; Magnitude, 1's Complement</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1_gB40ZTTnemql7jNzw9TLyisETixjFS3/view?usp=sharing" target="_blank" class="resource-link slide">📄 Number System (continued)</a>
+                <a href="https://drive.google.com/file/d/1nz6l1QJ6eRwPV5XnVL6ooiipEExf1MvJ/view?usp=sharing" target="_blank" class="resource-link slide">📄 BCD (Binary Coded Decimal)</a>
+                <a href="https://drive.google.com/file/d/1S-vYxyaqH5g1UUZ-oMZCWhbLXDKKUQs6/view?usp=sharing" target="_blank" class="resource-link slide">📄 Sign &amp; Magnitude, 1s Complement</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Notes</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1MbI59iz1KEieZSa6HPHQFaQIA5MUEBB2/view?usp=sharing" target="_blank" class="resource-link note">📝 Subtraction</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=sgw8GwiFsFc&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=14" target="_blank" class="resource-link video">▶ NS Part 10: Subtraction (13 min)</a>
+                <a href="https://www.youtube.com/watch?v=FILIpZd_Lsc&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=16" target="_blank" class="resource-link video">▶ Binary Coded Decimal (16 min)</a>
+                <a href="https://www.youtube.com/watch?v=frSjp0QRfj0&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=17" target="_blank" class="resource-link video">▶ Sign &amp; Magnitude Representation (10 min)</a>
+                <a href="https://www.youtube.com/watch?v=p3XPw2bmu94&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=18" target="_blank" class="resource-link video">▶ 1's Complement (16 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe39-xN7ptl0d8SetxcYM-GgW29Yt3tof5I9Y9KB2djCsdq0Q/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 9</span>
+              <span class="class-title">⭐ Quiz 1</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc"><strong>Syllabus:</strong> Computer Generations · Number System (everything covered up to Class 7)</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 10</span>
+              <span class="class-title">2's Complement</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Notes</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1Sehx7XXof55f9etD5hDKmZ4gWoNNSHP4/view?usp=sharing" target="_blank" class="resource-link note">📝 2's Complement</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=UKdse_5uzfA&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=18" target="_blank" class="resource-link video">▶ 2's Complement — Conversions From/To Decimal (16 min)</a>
+                <a href="https://www.youtube.com/watch?v=RXgBRoaGOxI&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=19" target="_blank" class="resource-link video">▶ Range of 2's Complement Number System (21 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSf_PNepANd8ODUdopBvNfdRz9gFujVwPPhsTs9kM5J1N8uRhQ/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 11</span>
+              <span class="class-title">Quiz 1 Review</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Quiz 1 marks are revealed amongst the students and the answers discussed.</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 12</span>
+              <span class="class-title">Zero &amp; Sign Extension · 2's Complement Arithmetic</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1HQRWg-Ptngx1Wg9IRS6-bT4Oqt94kN5u/view?usp=sharing" target="_blank" class="resource-link slide">📄 Zero &amp; Sign Extension</a>
+                <a href="https://drive.google.com/file/d/1A0RTXeROVn4pu8YCSK16xbLVoykbi7UQ/view?usp=sharing" target="_blank" class="resource-link slide">📄 2's Complement Arithmetic</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=FIIpZ5Qse98&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=20" target="_blank" class="resource-link video">▶ Zero Extension &amp; Sign Extension (28 min)</a>
+                <a href="https://www.youtube.com/watch?v=bJ5igDngmus&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=21" target="_blank" class="resource-link video">▶ 2's Complement Arithmetic (22 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScw0vmGN_2yrFTi17iPBo9kNP7dFL9DJ-tExzR89T5MRNvttg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Worksheet</span>
+              <span class="class-title">Signed Numbers</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Files</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1m9EQG0M5INLUCa3sUf61W35ruzIRN0Wt/view?usp=sharing" target="_blank" class="resource-link file">📎 Signed Numbers Worksheet</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=8pROtSDL6-Y&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=22" target="_blank" class="resource-link video">▶ Signed Numbers Worksheet Tutorial (25 min) <em style="opacity:.7;font-size:.85em;">optional</em></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Midterm</span>
+              <span class="class-title">⭐ Midterm Exam</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc"><strong>Syllabus:</strong> Everything covered so far.</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 13</span>
+              <span class="class-title">IEEE-754 Floating Point Representation (Single Precision)</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Notes</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1F073Ffpz5Zqgp2tQiCFQa_e90qLPI2Ye/view?usp=sharing" target="_blank" class="resource-link note">📝 Introduction to IEEE-754 FP Rep</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=0rse2_FCBb0&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=23" target="_blank" class="resource-link video">▶ Floating Point Numbers (11 min)</a>
+                <a href="https://www.youtube.com/watch?v=4KDOz_tFOdI&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=24" target="_blank" class="resource-link video">▶ IEEE-754 Single Precision Representation (37 min)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 14</span>
+              <span class="class-title">IEEE-754 to Decimal Conversion</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Notes</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1grC4U1ISxBMWi1Fh-UsG0k-hUYwP86ff/view?usp=sharing" target="_blank" class="resource-link note">📝 Decimal to IEEE-754 Review</a>
+                <a href="https://drive.google.com/file/d/1JuSj0_C9KLbe0jbqeyKQQ15_paRnTev2/view?usp=sharing" target="_blank" class="resource-link note">📝 IEEE-754 to Decimal</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=NgeRZ0-djRI" target="_blank" class="resource-link video">▶ Decimal to IEEE-754 Single Precision (Review) (13 min)</a>
+                <a href="https://www.youtube.com/watch?v=IL-F8mk42hk&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=35" target="_blank" class="resource-link video">▶ IEEE-754 Single Precision to Decimal (19 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScBbNn8a39jwenYDfNUhemDF69Dt8mi-d1iwAlIRE9rAgZOBA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Worksheet</span>
+              <span class="class-title">IEEE-754 Floating Point Conversions</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Files</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1QzDIo1TuwiPJ4MU221quM3GG9_dqHgZy/view?usp=sharing" target="_blank" class="resource-link file">📎 IEEE-754 Conversions Worksheet</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 15</span>
+              <span class="class-title">Midterm Review</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Midterm marks are disclosed and the answers discussed.</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 16</span>
+              <span class="class-title">Memory</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Covers registers, cache (SRAM), primary memory (DRAM), secondary memory (HDD, SSD, flash), and various types of ROMs.</p>
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1365Pf1f0x7ERfgKHFZgr7Ritk0QIK6zZ/view?usp=sharing" target="_blank" class="resource-link slide">📄 Memory</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=CZexrT2BAMc&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=26" target="_blank" class="resource-link video">▶ Memory Part 1 (22 min)</a>
+                <a href="https://www.youtube.com/watch?v=uQQPsbVSTCI&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=27" target="_blank" class="resource-link video">▶ Memory Part 2 (15 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScsPFzvhQFZZmk0k8u7AwI8TvjgVcCJ0G5sAmVxucKpbj0c-A/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 17</span>
+              <span class="class-title">Understanding Performance</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Introduces clock cycles and calculating CPU execution time from instruction count, CPI, and clock speed.</p>
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1-bU-GvSGy-Top5Pb8GJ_Hp6yemh_6URR/view?usp=sharing" target="_blank" class="resource-link slide">📄 Understanding Performance</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=Ddzohs8paIk&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=25" target="_blank" class="resource-link video">▶ Understanding Performance (47 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSf8E-LdNezVdWgAQTgzKViKt4qocERxUWyfgYhCuDnPrrfgkA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 18</span>
+              <span class="class-title">Spreadsheet Functions</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Demonstrations for spreadsheet functions: SUM, COUNT, COUNTA, AVERAGE, IF, VLOOKUP, ROUND.</p>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=I86tSf74wcs&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=28" target="_blank" class="resource-link video">▶ Using Functions in a Spreadsheet</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdtQuk-ns0BIykDl7m5EZ4dCv91e4bGkXJjVgOAb_iuybnxfg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Assignment</span>
+              <span class="class-title">Spreadsheet Assignment</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group">
+              <p class="resource-group-label">Files</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1nWhD-C7U4G1Ge7XLbU0zgAATUbE2YvTC/view?usp=sharing" target="_blank" class="resource-link file">📎 Assignment Questions</a>
+                <a href="https://drive.google.com/file/d/1h1dZj6yYT-nQSMIoiCgPQ8aSTvNSYnXz/view?usp=sharing" target="_blank" class="resource-link file">📎 Cars Dataset (Excel)</a>
+                <a href="https://docs.google.com/spreadsheets/d/1tiwpPOJYvEF4xBlQ-AgYfkeTXaiv-MW3y8fGEU2chnE/edit?usp=sharing" target="_blank" class="resource-link file">📎 Cars Dataset (Google Sheets)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 19</span>
+              <span class="class-title">⭐ Quiz 2</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc"><strong>Syllabus:</strong> IEEE-754 · Understanding Performance · Memory</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 20</span>
+              <span class="class-title">Data Communication (Part 1–2)</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Part 1 introduces elements of communication; Part 2 covers various network topologies.</p>
+            <div class="resource-group">
+              <p class="resource-group-label">Slides</p>
+              <div class="resource-links">
+                <a href="https://drive.google.com/file/d/1PAykG-u0d1fV9v9i530INj1uJYtJykAd/view?usp=sharing" target="_blank" class="resource-link slide">📄 Data Communication</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=WL34UKIGroE" target="_blank" class="resource-link video">▶ Data Communication Part 1 (12 min)</a>
+                <a href="https://www.youtube.com/watch?v=vbDaM9WcR9Y" target="_blank" class="resource-link video">▶ Data Communication Part 2 (23 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdT7iO4zxcbD4aKpNUynNwlBW04Ou4aoA6Uv4H_aUnV_VP3DA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 21</span>
+              <span class="class-title">Data Communication (Part 3) &amp; Quiz 2 Review</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Textual and image data interpretation, parity, followed by Quiz 2 answer discussion.</p>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=fOq9xdZTYfA" target="_blank" class="resource-link video">▶ Data Communication Part 3 (29 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwGEm3HhexPG_0CBbn3GSXq38oyOJOv29AGa7O0MYU8VQTuA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 22</span>
+              <span class="class-title">Variables &amp; Control Flow Statements</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Introduces variables, <span class="inline-code">if/else</span> statements, and data types — connecting with 2's complement and IEEE-754, and linking the spreadsheet IF function to control flow.</p>
+            <div class="resource-group">
+              <p class="resource-group-label">Videos</p>
+              <div class="resource-links">
+                <a href="https://www.youtube.com/watch?v=I5KzFJgoHnM&list=PLilcMImwz-CC47lo6FjZ-M8UrUIEwhu7m&index=33&t=3s" target="_blank" class="resource-link video">▶ Variables and Control Flow Statements (33 min)</a>
+              </div>
+            </div>
+            <div class="resource-group">
+              <p class="resource-group-label">Quiz</p>
+              <div class="resource-links">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScmsjZjdBlqm9bqOx5JPfViR9zikFOEekCWR8WbCAv4D8fMiw/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Class 23</span>
+              <span class="class-title">Building a Portfolio Site with Google Sites</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <p class="class-desc">Students learn to create a personal or portfolio website using <a href="https://sites.google.com" target="_blank" style="color:var(--accent)">Google Sites</a>.</p>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left">
+              <span class="class-num">Final</span>
+              <span class="class-title">⭐ Final Exam</span>
+            </div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="class-note">
+              <strong>Syllabus includes:</strong><br />
+              From Midterm: Binary/Decimal/Hex conversions · 2's complement (conversion, range, arithmetic)<br />
+              After Midterm: IEEE-754 · Memory · Performance · Data Communication · Variables &amp; Control Flow
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════ COMPUTER ARCHITECTURE ════ -->
+    <section class="page" id="page-ca">
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a onclick="showPage('home')">Home</a>
+          <span>›</span>
+          <span>Computer Architecture</span>
+        </div>
+        <h2>Computer Architecture</h2>
+        <div class="resources-bar">
+          <a href="https://www.youtube.com/playlist?list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Video Playlist
+          </a>
+          <a href="https://drive.google.com/drive/folders/1KzWiZRHT0U7yXO-4vHYLj39AFhIRHN7l?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            All Slides
+          </a>
+          <a href="https://drive.google.com/drive/folders/1KsEZ5B1YJ4edQT1qhvoUrmsVWyRwfWvV?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            All Notes
+          </a>
+        </div>
+      </div>
+
+      <div class="class-list">
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 1</span><span class="class-title">Course Overview</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body"><p class="class-desc">Students are given an overview of what this course is about and how it will be conducted.</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 2</span><span class="class-title">Introduction · Moore's Law · Von Neumann vs Harvard</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1eHZfBm1CXwHdsP3PnwEoGa5DupWH92ZR/view?usp=sharing" target="_blank" class="resource-link slide">📄 Introduction</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/A9KzxY0OIFs" target="_blank" class="resource-link video">▶ Introduction (21 min)</a>
+              <a href="https://www.youtube.com/watch?v=A3pr-8gCEQ0" target="_blank" class="resource-link video">▶ Moore's Law (16 min)</a>
+              <a href="https://www.youtube.com/watch?v=w18sD6tW2j8&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=2&t=279s" target="_blank" class="resource-link video">▶ Von Neumann vs Harvard Architecture (13 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSf116tlpEm9P0rFdFCqM-_mkQ0RLjKWKTKFqxxjn4M644nZWg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 3</span><span class="class-title">RISC vs CISC</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1PFxF-p6hwLW-sXjlj1pSzCx_FvkxtDu2/view?usp=sharing" target="_blank" class="resource-link note">📝 RISC vs CISC Handout (must read)</a>
+              <a href="https://drive.google.com/file/d/1C_zG_bvh5vml4rSboOgEdl0sLunJ7tiE/view?usp=sharing" target="_blank" class="resource-link note">📝 RISC vs CISC Handwritten</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=PbCyBQuvRwE&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=3" target="_blank" class="resource-link video">▶ RISC vs CISC (31 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfEGI5v6xgHmr7qyN_2CmlPif7ZNfw7ST5JySTKyH2NoukuPQ/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 4</span><span class="class-title">MIPS Memory · R Type &amp; I/J Type Instructions</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/13O7AeOmgQKuHE3FznBKZhfLq9gyb7TGK/view?usp=sharing" target="_blank" class="resource-link note">📝 Memory + R Type Instructions</a>
+              <a href="https://drive.google.com/file/d/1Gavbu237pVL-rlnWMKnJ5uKhwvQcRIj6/view?usp=sharing" target="_blank" class="resource-link note">📝 beq, bne, j, addi, slt (Pages 1–3)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=D0LCzllgnCE&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=5" target="_blank" class="resource-link video">▶ MIPS Memory: Register, Instruction, Data (14 min)</a>
+              <a href="https://www.youtube.com/watch?v=VK8zkymgAzM&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=5" target="_blank" class="resource-link video">▶ R Type Instructions: and, sub, or (11 min)</a>
+              <a href="https://www.youtube.com/watch?v=yULA5gpCRHg&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=6" target="_blank" class="resource-link video">▶ Translating if/else to MIPS (I, J Type) (19 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSeRl3A6snWyELCmfzNrBGy-ZoEtroYDOvGM7CNU4-nhdzGB3A/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Classwork:</strong> Translate the given if/else code to MIPS using the <span class="inline-code">bne</span> instruction (instead of <span class="inline-code">beq</span>) and without a jump instruction. <a href="https://www.youtube.com/watch?v=H94JF1MbKdI&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=7" target="_blank" style="color:var(--accent)">Explanation video</a> (attempt first!).</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 5</span><span class="class-title">MIPS Register Convention · Register File Read/Write</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1jK0T3SP-aGeE7_eMWIWnKu4OGvO3Gb7g/view?usp=sharing" target="_blank" class="resource-link slide">📄 MIPS ISA (Slides 1–13)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=WiHzZ3HKucI&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=11" target="_blank" class="resource-link video">▶ MIPS Register Convention (24 min)</a>
+              <a href="https://youtu.be/z2OTNBvrm9c" target="_blank" class="resource-link video">▶ Register File: Read/Write Operations (30 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSd3SKk6lucKJl7QeqKcxDWVIhnWUDRsLxY90tyUqhkUfUPKvA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 6</span><span class="class-title">16-bit Constants · Zero &amp; Sign Extension</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1jK0T3SP-aGeE7_eMWIWnKu4OGvO3Gb7g/view?usp=sharing" target="_blank" class="resource-link slide">📄 MIPS ISA (Slides 18–22)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1Gavbu237pVL-rlnWMKnJ5uKhwvQcRIj6/view?usp=sharing" target="_blank" class="resource-link note">📝 beq, bne, j, addi, slt (Page 4)</a>
+              <a href="https://drive.google.com/file/d/1SFLR-4ldwPeqZwIA2sPSk3d82u1CZ9U6/view?usp=sharing" target="_blank" class="resource-link note">📝 Zero, Sign Extension</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=CKa-ivRnlf0&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=11&t=117s" target="_blank" class="resource-link video">▶ Placing Custom Values (16-bit Constants) in Registers (5 min)</a>
+              <a href="https://www.youtube.com/watch?v=XoizYbl9bAk&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=12" target="_blank" class="resource-link video">▶ Zero Extension &amp; Sign Extension (26 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScIvGRvRVJ2DPJkwTXz86-AjWkM_2NsC55UtgRq3gL8AoyGBQ/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 7</span><span class="class-title">Big/Little Endian · Memory Access: lw &amp; sw</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1q0UfgrbhSm5xQwJwHrQqWuW0jkDVVFvt/view?usp=sharing" target="_blank" class="resource-link note">📝 Load &amp; Store Operations</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/7-uuTg7rJz0" target="_blank" class="resource-link video">▶ Big Endian, Little Endian (20 min)</a>
+              <a href="https://www.youtube.com/watch?v=EaRb94LQh9Y" target="_blank" class="resource-link video">▶ Memory Access: lw, sw (I Type) (20 min)</a>
+              <a href="https://youtu.be/YpOHSX2w2Ls" target="_blank" class="resource-link video">▶ Using lw &amp; sw to Translate to MIPS (12 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfU0nhAA8EXOmJAZoWomLyBltbtjdK23MaUqxlAlPvXrBrJ9w/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 8</span><span class="class-title">⭐ Quiz 1</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Contents of Classes 2, 3, 4, 5 &amp; 6</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 9</span><span class="class-title">For Loops · Translating Arrays to MIPS</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1Gavbu237pVL-rlnWMKnJ5uKhwvQcRIj6/view?usp=sharing" target="_blank" class="resource-link note">📝 beq, bne, j, addi, slt (Pages 5–7)</a>
+              <a href="https://drive.google.com/file/d/1099a3kxxdMa1tnNJSzNrbuWUy6rIc_ZS/view?usp=sharing" target="_blank" class="resource-link note">📝 Iterating Arrays in For Loops</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/SHtFfguPPII" target="_blank" class="resource-link video">▶ Translating a for loop Using beq &amp; slti (29 min)</a>
+              <a href="https://youtu.be/z0V6FTZ1ufM" target="_blank" class="resource-link video">▶ Iterating Arrays in for loops (21 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRHtKA4dDj1aR_R_QwWoDWr2fBiLhgNRlWVEZZ4e63oSdvpg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Classwork:</strong> Translate C for-loop with array accesses to MIPS (base address of A in $s5). <a href="https://www.youtube.com/watch?v=LsUWg4Wt1DM" target="_blank" style="color:var(--accent)">Video explanation</a> · <a href="https://drive.google.com/file/d/1OXTzagZjc956TcsV1p-6h6W_vPs0IWR6/view?usp=sharing" target="_blank" style="color:var(--accent)">Code solution</a> — attempt before looking!</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 10</span><span class="class-title">Encoding &amp; Decoding Machine Language</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1alo7-XI6EgOfMJAF6EGcJn3SuXP0PW_B/view?usp=sharing" target="_blank" class="resource-link note">📝 Encoding, Decoding</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=A9Ba6B-yc-0" target="_blank" class="resource-link video">▶ Encoding Assembly → Machine Language (30 min)</a>
+              <a href="https://www.youtube.com/watch?v=6_TCsSykXmc" target="_blank" class="resource-link video">▶ Decoding Machine Language → Assembly (20 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSc9rblRaCQzOcZwsf3TUwhIfSvmwGje4VWtTF7cXzAkvfl-QQ/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 11</span><span class="class-title">32-bit Constants · Shift Operations · Integer Mult/Div</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1jK0T3SP-aGeE7_eMWIWnKu4OGvO3Gb7g/view?usp=sharing" target="_blank" class="resource-link slide">📄 MIPS ISA (continued)</a>
+              <a href="https://docs.google.com/presentation/d/1YX9hN8VGU5OZjARWZ_bBpZJBiOSDjQFR/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link slide">📄 Integer Multiplication and Division</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/13YyQfz56hUvvDPv9inT3vgnbvR22kqpG/view?usp=sharing" target="_blank" class="resource-link note">📝 Shift Operations - sll, srl</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=-oc9mnudAwI" target="_blank" class="resource-link video">▶ Loading a 32-bit Constant to a Register (14 min)</a>
+              <a href="https://www.youtube.com/watch?v=8om1F5Fbnhk" target="_blank" class="resource-link video">▶ Shift Operations - sll, srl (15 min)</a>
+              <a href="https://www.youtube.com/watch?v=2f2dYArHb3E&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=24" target="_blank" class="resource-link video">▶ Integer Multiplication and Division (9 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScm5FXkI1usw5Ijd21FfbfYyxr2Sx8HTXX3UyMXU_qK_HyzJA/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Midterm</span><span class="class-title">⭐ Midterm Exam</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Everything covered so far.</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 12</span><span class="class-title">Midterm Viva</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body"><p class="class-desc">Students explain the logical reasoning behind their midterm answers. Attendance mandatory for all who took the midterm.</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 13</span><span class="class-title">MIPS Addressing Modes</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1aZwFK-ItBSRLk8_pG1Rk6P3w-wjnS-fL/view?usp=sharing" target="_blank" class="resource-link slide">📄 MIPS Addressing Modes</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=yxEAD1ryVdE&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=24&t=1567s" target="_blank" class="resource-link video">▶ MIPS Addressing Modes (35 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 14</span><span class="class-title">Procedures: jal, jr · Spilling Registers</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=pkyHGYct_WY&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=27" target="_blank" class="resource-link video">▶ Instructions for Procedures — jal, jr (16 min)</a>
+              <a href="https://www.youtube.com/watch?v=ZpzRjwK5xlg&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=28" target="_blank" class="resource-link video">▶ Spilling Registers (30 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 15</span><span class="class-title">Understanding Performance</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://docs.google.com/presentation/d/1B8Fx1dSLtlYggjz2QYwmPzVQcnjj-M6I/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link slide">📄 Understanding Performance</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=eASrZ-w412U&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=26" target="_blank" class="resource-link video">▶ Understanding Performance (35 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 16</span><span class="class-title">IEEE-754 Floating Point Representation</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1KQV1f-cR3HccI_mca3Hd3X9fFzSWK4jX/view?usp=sharing" target="_blank" class="resource-link note">📝 Introduction to IEEE-754 FP Representation</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=6R8OEcMzF9c&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=30" target="_blank" class="resource-link video">▶ Floating Point Numbers (11 min)</a>
+              <a href="https://www.youtube.com/watch?v=hm74DF7R9fQ&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=30" target="_blank" class="resource-link video">▶ IEEE-754 Single Precision FP Representation (37 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 17</span><span class="class-title">IEEE-754 to Decimal · MIPS Floating Point Instructions</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes &amp; Slides</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/13bpHf7zzhbqdfDz8po8_X55WuADHE_pf/view?usp=sharing" target="_blank" class="resource-link note">📝 IEEE-754 FP to Decimal</a>
+              <a href="https://docs.google.com/presentation/d/1KD6XOXLn5PDLH5ilNcZfNHqa42awavD3/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link slide">📄 MIPS Floating Point Instructions</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=NgeRZ0-djRI" target="_blank" class="resource-link video">▶ Decimal to IEEE-754 Review + Range (13 min)</a>
+              <a href="https://www.youtube.com/watch?v=iUq3yhCBOgw&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=34" target="_blank" class="resource-link video">▶ IEEE-754 Single Precision to Decimal (19 min)</a>
+              <a href="https://www.youtube.com/watch?v=0-MEg-VKCZY&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=34" target="_blank" class="resource-link video">▶ MIPS Floating Point Instructions (12 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Assignment</p><div class="resource-links">
+              <a href="https://docs.google.com/document/d/12NzByAijPoCgwIfPwTLuD7RySI78E_QC/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link file">📎 IEEE-754 Floating Point Representation Assignment</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 18</span><span class="class-title">MIPS Datapath Components</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://docs.google.com/presentation/d/1gdFuXDwzVdaRRd9_WT965u6pqKvlDirH/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link slide">📄 Basic MIPS Architecture</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=4z9Ceu9rR-U&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=35" target="_blank" class="resource-link video">▶ MIPS Datapath Components (28 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 19</span><span class="class-title">⭐ Quiz 2</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Addressing Modes · Stack · Performance · IEEE-754 Floating Point Representation</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 20</span><span class="class-title">Single Cycle &amp; Multicycle Datapath</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=7N3JeooQ46I&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=36" target="_blank" class="resource-link video">▶ Single Cycle Datapath (36 min)</a>
+              <a href="https://www.youtube.com/watch?v=orKJHeM5Pk8&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=37" target="_blank" class="resource-link video">▶ Multicycle Datapath (25 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScl2v_Wo_YXWHXQKyiIwPVk5DkIfLvjGh16X-rHumKEro7s_g/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 21</span><span class="class-title">MIPS Pipelining &amp; Hazards</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links">
+              <a href="https://docs.google.com/presentation/d/1SCL85B3G8ZINBZNnRxIbR8eeoYbRu3_X/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link slide">📄 Pipelining and Hazards</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=x2TABEnH0wo&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=38" target="_blank" class="resource-link video">▶ MIPS Pipelining (21 min)</a>
+              <a href="https://www.youtube.com/watch?v=X2OB0h1czvI&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=39" target="_blank" class="resource-link video">▶ Pipeline Hazards (25 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSe85r3TIMEkSZfqlyAupah3LNrBApKDJaDqE0jxM6iJt-aGRg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Class 22</span><span class="class-title">Identifying &amp; Resolving Hazards</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/10VvP93HZIu-a5HaHpxFv2YDrAVOgykVa/view?usp=sharing" target="_blank" class="resource-link note">📝 Identifying &amp; Resolving Hazards</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=wPQ8S0reqVI&list=PLilcMImwz-CBNd_K7hQUMBnaIn5bglhAk&index=41" target="_blank" class="resource-link video">▶ Identifying &amp; Resolving Hazards (27 min)</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Quiz</p><div class="resource-links">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScRhQPczXA4hsuQyWA0qJJICOgdrulwDBtHwFrxTN7PP5NTcg/viewform?usp=sf_link" target="_blank" class="resource-link quiz">📝 Test Your Knowledge</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Classwork:</strong> Given 5 MIPS pipeline instructions — identify hazards, resolve using stalls only, and find the most efficient resolution for lowest CPI.</div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)">
+            <div class="class-header-left"><span class="class-num">Final</span><span class="class-title">⭐ Final Exam</span></div>
+            <svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Everything covered after the midterm.</p></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════ DATABASE DESIGN LAB ════ -->
+    <section class="page" id="page-ddl">
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a onclick="showPage('home')">Home</a>
+          <span>›</span>
+          <span>Database Design Lab</span>
+        </div>
+        <h2>Database Design Lab</h2>
+        <div class="resources-bar">
+          <a href="https://www.youtube.com/playlist?list=PLilcMImwz-CAkpsTDkqSh13r6zAQK-TY6" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Video Playlist
+          </a>
+          <a href="https://drive.google.com/drive/folders/1K_FOK7pxFH_txFD0WSPApEv_svlmAa-r?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Lab Materials
+          </a>
+          <a onclick="showPage('dd')" href="#" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+            Theory Course →
+          </a>
+        </div>
+      </div>
+
+      <div class="class-list">
+
+        <div class="class-item"><div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 1</span><span class="class-title">Lab Overview</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="class-body"><p class="class-desc">Students are given an overview of what this lab is about and how it will be conducted.</p></div></div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 2</span><span class="class-title">MySQL Data Types · Creating &amp; Populating Tables</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Files</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/1tVWlt5B8o3WXPkEPFeNYQImzyb71G52r/view?usp=sharing" target="_blank" class="resource-link file">📎 Mini Server</a>
+              <a href="https://drive.google.com/file/d/1UXln6dGrY27d3HauAVbhumTf1ccxbsc-/view?usp=sharing" target="_blank" class="resource-link note">📝 MySQL Data Types Notes</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/x2BemHD4lTM" target="_blank" class="resource-link video">▶ SQL vs MySQL (9 min)</a>
+              <a href="https://youtu.be/TyN21ZAv8dw" target="_blank" class="resource-link video">▶ MySQL Data Types (18 min)</a>
+              <a href="https://youtu.be/s7t8ZxqV9eI" target="_blank" class="resource-link video">▶ Creating a Table &amp; Populating with Data (24 min)</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Lab Task:</strong> Complete Worksheet 1 tasks 1–2 (create table + insert data). Save SQL statements in a .txt file. Follow the <a href="https://docs.google.com/document/d/1ZtDgZAVbOEDGAzvlVedKFnzuKQzEuEQT/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">submission format</a>.<br/><a href="https://drive.google.com/file/d/1Dd5MVOQLl4hHkCnJAd5em01dZZfhYYpR/view?usp=sharing" target="_blank" style="color:var(--accent)">📎 Worksheet 1</a></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 3</span><span class="class-title">Data Manipulation · Retrieval Queries</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/zEHJp0s1CuU" target="_blank" class="resource-link video">▶ UPDATE, SET, WHERE, DROP, ALTER, ADD, MODIFY (22 min)</a>
+              <a href="https://www.youtube.com/watch?v=fNsvgv6hcfk&t=533s" target="_blank" class="resource-link video">▶ DISTINCT, ORDER BY, BETWEEN, AS, NOT, AND, OR, YEAR, LIKE (37 min)</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Lab Task:</strong> Complete Worksheet 1, Tasks 3–6. Use the <a href="https://docs.google.com/document/d/1_BxIWjX50IxGmslj6HBy7SLqXYBTwXHm/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">submission format</a>. <a href="https://drive.google.com/file/d/1Dd5MVOQLl4hHkCnJAd5em01dZZfhYYpR/view?usp=sharing" target="_blank" style="color:var(--accent)">📎 Worksheet 1</a></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 4</span><span class="class-title">More SQL Keywords · Aggregation · Subqueries</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://docs.google.com/document/d/1KTgOIERF6obSFRqqe7qNlXrN9iGS5umo/edit?usp=sharing&rtpof=true&sd=true" target="_blank" class="resource-link note">📝 More SQL Keywords</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/i7JVULaQwB0" target="_blank" class="resource-link video">▶ More SQL Keywords (11 min)</a>
+              <a href="https://youtu.be/_EUseEVVSr0" target="_blank" class="resource-link video">▶ Aggregation (14 min)</a>
+              <a href="https://youtu.be/GVcoONMlX4A" target="_blank" class="resource-link video">▶ Sub Queries (18 min)</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Lab Task:</strong> Complete all tasks in <a href="https://docs.google.com/document/d/18enHWNVVBSDr2A-Ui3I0K8LIm2xKVdZP/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">Worksheet 2</a>. Same submission format as Lab 3. Also, submit project name and group info (max 5 students; no duplicate projects).</div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 5</span><span class="class-title">⭐ Test 1</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <p class="class-desc"><strong>Syllabus:</strong> Everything covered so far.</p>
+            <p class="class-desc">Queries written via a form field must abide by the instructions given <a href="https://docs.google.com/document/d/1gGTEBZEiHS6vSk9sSXzKVvehD9CIvo5F/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">here</a>.</p>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 6</span><span class="class-title">Inserting Data Using a Web Page</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://youtu.be/5NY1nYkmTFQ" target="_blank" class="resource-link video">▶ Inserting Data Using a Web Page (28 min)</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Lab Task:</strong> <a href="https://docs.google.com/document/d/1_I5Xzsg8RWuUskXBxHJXdv7DrRxCBiro/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">Worksheet 3</a>, tasks 1–6. Also, submit the <strong>EER diagram</strong> of your project. Review ERD/EERD concepts from the <a onclick="showPage('dd')" style="color:var(--accent);cursor:pointer">Database Design</a> course (Classes 7, 8, 10).</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 7</span><span class="class-title">Constraints · Join Operations</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://docs.google.com/document/d/1nsBJGFo6Vr2hiet6bryMctsrIxrQubr0/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link note">📝 Constraints</a>
+              <a href="https://drive.google.com/file/d/1G0tUvI-XvkemMWOqBH-ADJ303VuNyyGE/view?usp=sharing" target="_blank" class="resource-link note">📝 Joins</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=q9HLFKXyRRU&list=PLilcMImwz-CAkpsTDkqSh13r6zAQK-TY6&index=9" target="_blank" class="resource-link video">▶ Constraints (28 min)</a>
+              <a href="https://www.youtube.com/watch?v=MWE08MaRML0&list=PLilcMImwz-CAkpsTDkqSh13r6zAQK-TY6&index=10" target="_blank" class="resource-link video">▶ Join Operations (17 min)</a>
+              <a href="https://www.youtube.com/watch?v=A0kAy4AitgY&list=PLilcMImwz-CAkpsTDkqSh13r6zAQK-TY6&index=11" target="_blank" class="resource-link video">▶ Additional Info for Lab Task</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Lab Task:</strong> <a href="https://docs.google.com/document/d/1n1PI_993GDfIrgdf_1n6Af5g1rP7g21i/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">Worksheet 4</a>, tasks 1–2. Submit the <strong>schema diagram</strong> of your project (ideally normalized). Review mapping from <a onclick="showPage('dd')" style="color:var(--accent);cursor:pointer">Database Design</a> (Classes 14–16).</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 8</span><span class="class-title">Joining Three Tables · Joins with Subqueries</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=TXS-fhk9ah8&list=PLilcMImwz-CAkpsTDkqSh13r6zAQK-TY6&index=12" target="_blank" class="resource-link video">▶ Joining Three Tables (24 min)</a>
+              <a href="https://www.youtube.com/watch?v=ftiLRU2xBx0&list=PLilcMImwz-CAkpsTDkqSh13r6zAQK-TY6&index=13" target="_blank" class="resource-link video">▶ Joins Involving Subqueries (18 min)</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Lab Task:</strong> <a href="https://docs.google.com/document/d/1n1PI_993GDfIrgdf_1n6Af5g1rP7g21i/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">Worksheet 4</a>, task 3. Edit <a href="https://docs.google.com/document/d/1-UBhNg5y01n3CaDtz2fCpekmVEVjmVl2/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" style="color:var(--accent)">this submission file</a> in the format of the first solved problem. Submit the <strong>SQL features</strong> of your project.</div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 9</span><span class="class-title">⭐ Test 2</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Everything covered so far, with emphasis on Worksheet 4.</p></div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Lab 10</span><span class="class-title">⭐ Project Demo</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc">Students are required to demonstrate their project.</p></div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Final</span><span class="class-title">⭐ Final Exam</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Everything covered so far.</p></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════ DATABASE DESIGN ════ -->
+    <section class="page" id="page-dd">
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a onclick="showPage('home')">Home</a>
+          <span>›</span>
+          <span>Database Design</span>
+        </div>
+        <h2>Database Design</h2>
+        <div class="resources-bar">
+          <a href="https://www.youtube.com/playlist?list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Video Playlist
+          </a>
+          <a href="https://drive.google.com/drive/folders/1N7TUSSZlt46MHdVW4BDMMw7v7YZ_drJX?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+            All Slides
+          </a>
+          <a href="https://drive.google.com/drive/folders/1Bv6RPbSG7j8Tw0Hts5tZzQJizVpVOcYA?usp=sharing" target="_blank" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+            All Notes
+          </a>
+          <a onclick="showPage('ddl')" href="#" class="res-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Lab Course →
+          </a>
+        </div>
+      </div>
+
+      <div class="class-list">
+
+        <div class="class-item"><div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 1</span><span class="class-title">Course Overview</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="class-body"><p class="class-desc">Students are given an overview of what this course is about and how it will be conducted.</p></div></div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 2</span><span class="class-title">Database &amp; Database Users (Part 1)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/1i9Z7pki6VakwwLuFjuz72tnWlM75q1AU/view?usp=sharing" target="_blank" class="resource-link slide">📄 Intro</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=2Ug96gXVf6Q&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=1&t=684s" target="_blank" class="resource-link video">▶ Database &amp; Database Users Part 1 (32 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 3</span><span class="class-title">Database &amp; Database Users (Part 2)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://youtu.be/trGr56aV2CY" target="_blank" class="resource-link video">▶ Database &amp; Database Users Part 2 (26 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 4</span><span class="class-title">DB System Concepts &amp; Architecture</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/1Fbksw_P8rOd_DJct-wMEgCaFl6Y93z6V/view?usp=sharing" target="_blank" class="resource-link slide">📄 Concepts and Architecture</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=aXMdZbkjbS4&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=4" target="_blank" class="resource-link video">▶ Concepts and Architecture Part 1 (20 min)</a>
+              <a href="https://www.youtube.com/watch?v=lXSCMfUjo1c&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=5" target="_blank" class="resource-link video">▶ Concepts and Architecture Part 2 (24 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 5</span><span class="class-title">ER Diagram Modeling (Part 1)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/1L4Zg9dcu4wAur126UQPFSH1UIT7y0iRy/view?usp=sharing" target="_blank" class="resource-link slide">📄 ERD</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=oU_M_GNnRtc&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=6" target="_blank" class="resource-link video">▶ ER Modeling Part 1 (32 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 6</span><span class="class-title">ER Diagram Modeling (Part 2)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=GOkTRTAoLSM&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=7" target="_blank" class="resource-link video">▶ ER Modeling Part 2 (49 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 7</span><span class="class-title">ERD Review · ER Modeling (Part 3)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Notes</p><div class="resource-links">
+              <a href="https://drive.google.com/file/d/198CMqxY4Q29ex1ETG3C-8q_yD6X6Ecbw/view?usp=sharing" target="_blank" class="resource-link note">📝 Brief Review — ERD</a>
+              <a href="https://drive.google.com/file/d/1R55u6GJkx5Jb552I18_zZPUgdcSAjkqa/view?usp=sharing" target="_blank" class="resource-link note">📝 Detailed Review — ERD</a>
+            </div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=Zqzx5i9XK9w&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=8" target="_blank" class="resource-link video">▶ Brief Review: ER Diagram Concepts (13 min)</a>
+              <a href="https://www.youtube.com/watch?v=329dWL1E2EA&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=8&t=315s" target="_blank" class="resource-link video">▶ Detailed Review: ER Diagram Concepts (42 min)</a>
+              <a href="https://www.youtube.com/watch?v=Fy8fI-bG8yE&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=10" target="_blank" class="resource-link video">▶ ER Modeling Part 3 (14 min)</a>
+            </div></div>
+            <div class="class-note">📌 <strong>Classwork — ERD from Requirements:</strong> Draw an ER diagram for a music library database from the given requirements. <a href="https://www.youtube.com/watch?v=Fsx2GaB_rRI&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=9" target="_blank" style="color:var(--accent)">Explanation video</a> — attempt first! State any assumptions made.</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 8</span><span class="class-title">EER Modeling (Part 1)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/1Zwhst1T41225s1JpRoUJ_QpvSTdBDsgn/view?usp=sharing" target="_blank" class="resource-link slide">📄 EERD</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=qa-mou5iQ_k&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=11" target="_blank" class="resource-link video">▶ EER Modeling Part 1 (29 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 9</span><span class="class-title">⭐ Quiz 1</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Slides 2 &amp; 3</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 10</span><span class="class-title">EER Modeling (Part 2)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=uaC51-VQcR8&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=12" target="_blank" class="resource-link video">▶ EER Modeling Part 2 (26 min)</a></div></div>
+            <div class="class-note">📌 <strong>Classwork — EERD from Requirements:</strong> Draw an EER diagram for an organization's persons database. <a href="https://www.youtube.com/watch?v=A8j1xuAHSjo&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=13" target="_blank" style="color:var(--accent)">Explanation video</a> — attempt first! State assumptions.</div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Midterm</span><span class="class-title">⭐ Midterm Exam</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Slides 1, 2, 3 &amp; 4</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 11</span><span class="class-title">Relational Data Model &amp; Constraints (Part 1)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/13W8XfalaeAMTlC7QsIffRsoiGBJUoLt3/view?usp=sharing" target="_blank" class="resource-link slide">📄 Constraints</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=N2F7RRZ-igU&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=15&t=223s" target="_blank" class="resource-link video">▶ Relational Model &amp; Constraints Part 1 (31 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 12</span><span class="class-title">Midterm Viva</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc">Students explain the logical reasoning behind their midterm answers. Attendance mandatory for all who took the midterm.</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 13</span><span class="class-title">Relational Constraints (Part 2)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=otHT5QSb1IY&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd" target="_blank" class="resource-link video">▶ Relational Model &amp; Constraints Part 2 (60 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 14</span><span class="class-title">Mapping ER Diagram to Schema (Steps 1–7)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/19gxYEPNAu7b3EVa_FoiFjWn-CjuyMLho/view?usp=sharing" target="_blank" class="resource-link slide">📄 Mapping</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=o5cChksohsA&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=17" target="_blank" class="resource-link video">▶ Mapping ER Diagram to Schema — Steps 1–6 (35 min)</a>
+              <a href="https://www.youtube.com/watch?v=rR1AD2eJ2RM&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=18" target="_blank" class="resource-link video">▶ Mapping N-ary Relationship — Step 7 (6 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 15</span><span class="class-title">Mapping EER Diagram to Schema (Step 8)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=rSiduLzDeF8&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=19" target="_blank" class="resource-link video">▶ Mapping EER Diagram to Schema — Step 8 (41 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 16</span><span class="class-title">Mapping Union Types/Categories (Step 9)</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=1X4svcLVvYQ&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=20" target="_blank" class="resource-link video">▶ Mapping Union Types/Categories — Step 9 (11 min)</a></div></div>
+            <div class="class-note">📌 <strong>Classwork — ERD to Schema:</strong> Map the ER diagram <a href="https://drive.google.com/file/d/1z8M5QW3MOg454IiojZZHLaXnAIQeRZGN/view?usp=sharing" target="_blank" style="color:var(--accent)">here</a> to a schema. <a href="https://www.youtube.com/watch?v=SkdU9BcOzxw&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=21" target="_blank" style="color:var(--accent)">Explanation (12 min)</a>.<br/>
+            <strong>Classwork — EERD to Schema:</strong> Map the EER diagrams <a href="https://drive.google.com/file/d/1SZWoE3qLfJhcnhBO66OplImUyoUP4LqH/view?usp=sharing" target="_blank" style="color:var(--accent)">here</a> using all possible options. <a href="https://www.youtube.com/watch?v=ELdRtyN4Tyg&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=22" target="_blank" style="color:var(--accent)">Explanation (18 min)</a>.</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 17</span><span class="class-title">Normalization: Informal Guidelines &amp; Functional Dependencies</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/1uzY8EIjsqYFzmpPOcWUtVAgPmFtHXV-C/view?usp=sharing" target="_blank" class="resource-link slide">📄 Normalization</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=0bbblljiIFw&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=23" target="_blank" class="resource-link video">▶ Informal Guidelines &amp; Functional Dependencies (42 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 18</span><span class="class-title">Normalization: 1NF, 2NF, 3NF</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=QcalGjb5WYQ&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=24" target="_blank" class="resource-link video">▶ 1NF, 2NF, 3NF (36 min)</a></div></div>
+            <div class="class-note">📌 <strong>Classwork — Normalizing BOOK relation:</strong> Determine the normal form and decompose until fully normalized. <a href="https://www.youtube.com/watch?v=cWbaf9lXmWs&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=25" target="_blank" style="color:var(--accent)">Explanation (17 min)</a> — attempt first!</div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 19</span><span class="class-title">SQL: Schema Definitions · Data Types · Joins</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Slides</p><div class="resource-links"><a href="https://drive.google.com/file/d/1WQg8vpTu69T0VBc5cfefbhRr2lORJHV_/view?usp=sharing" target="_blank" class="resource-link slide">📄 SQL</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=9yarNPdzIdk&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=26" target="_blank" class="resource-link video">▶ Schema Definitions (18 min)</a>
+              <a href="https://www.youtube.com/watch?v=TyN21ZAv8dw" target="_blank" class="resource-link video">▶ MySQL Data Types (17 min)</a>
+              <a href="https://www.youtube.com/watch?v=B8XuJgkO63w&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=28" target="_blank" class="resource-link video">▶ Inner Join, Left Join, Right Join, Full Outer Join (17 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 20</span><span class="class-title">Simple SQL Queries</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=wiPGd71HQb0&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=29" target="_blank" class="resource-link video">▶ Simple SQL Queries (43 min)</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 21</span><span class="class-title">⭐ Quiz 2</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Slides 5 &amp; 6</p></div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 22</span><span class="class-title">Nested Queries</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links"><a href="https://www.youtube.com/watch?v=Yj8BDBdiiZc&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=30" target="_blank" class="resource-link video">▶ Nested Queries (38 min)</a></div></div>
+            <div class="resource-group"><p class="resource-group-label">Assignment</p><div class="resource-links"><a href="https://docs.google.com/document/d/13ch5Y3k9eMr3gwv5gxAJdzFFyctD49Sn/edit?usp=sharing&ouid=108884332834002690572&rtpof=true&sd=true" target="_blank" class="resource-link file">📎 Assignment on SQL</a></div></div>
+          </div>
+        </div>
+
+        <div class="class-item">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Class 23</span><span class="class-title">Aggregate Functions · GROUP BY · ORDER BY · Summary</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body">
+            <div class="resource-group"><p class="resource-group-label">Videos</p><div class="resource-links">
+              <a href="https://www.youtube.com/watch?v=qaSH6INw-0Y&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=31" target="_blank" class="resource-link video">▶ Aggregate Functions, Group By, Substring Comparison, Order By (26 min)</a>
+              <a href="https://www.youtube.com/watch?v=476eOrtBJbU&list=PLilcMImwz-CClWDbaWpm-OpenrPW1TQzd&index=32" target="_blank" class="resource-link video">▶ Summary of SQL Queries (17 min)</a>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="class-item milestone">
+          <div class="class-header" onclick="toggleClass(this)"><div class="class-header-left"><span class="class-num">Final</span><span class="class-title">⭐ Final Exam</span></div><svg class="class-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div class="class-body"><p class="class-desc"><strong>Syllabus:</strong> Everything covered after the midterm.</p></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ── NAVIGATION ──────────────────────────────────────────
+  const pages = ['home','cf','ca','ddl','dd'];
+  function showPage(id) {
+    pages.forEach(p => {
+      document.getElementById('page-'+p).classList.remove('active');
+      document.getElementById('nav-'+p).classList.remove('active');
+    });
+    document.getElementById('page-'+id).classList.add('active');
+    document.getElementById('nav-'+id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // close mobile nav
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('overlay').classList.remove('open');
+    return false;
+  }
+
+  // ── ACCORDION ────────────────────────────────────────────
+  function toggleClass(header) {
+    const item = header.closest('.class-item');
+    item.classList.toggle('open');
+  }
+
+  // ── MOBILE NAV ───────────────────────────────────────────
+  function toggleMobileNav() {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  // ── PREVENT DEFAULT on nav links ─────────────────────────
+  document.querySelectorAll('.nav-links a, .course-card').forEach(el => {
+    el.addEventListener('click', e => e.preventDefault());
+  });
+</script>
+</body>
+</html>
